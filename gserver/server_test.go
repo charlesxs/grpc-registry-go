@@ -12,7 +12,7 @@ func TestServer(t *testing.T) {
 		Port:    8081,
 		Schema:  "etcd",
 		EtcdRegistryConfig: &config.EtcdRegistryConfig{
-			Endpoints: []string{"etcd.server.addr"},
+			Endpoints: []string{"etcd.server.addr:2379"},
 		},
 	}
 

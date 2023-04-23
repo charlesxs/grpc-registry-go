@@ -25,7 +25,7 @@ type etcdRegistryFactory struct {
 func (factory *etcdRegistryFactory) BuildOptions(cfg *config.ServerConfig) error {
 	etcdConfig := cfg.EtcdRegistryConfig
 	if etcdConfig == nil {
-		return fmt.Errorf("[%w] 未找到etcd registry config", ErrConfigNotFound)
+		return fmt.Errorf("[%w] did not specify etcd registry config", ErrConfigNotFound)
 	}
 
 	o := &EtcdRegistryOptions{
@@ -76,7 +76,7 @@ func (factory *etcdRegistryFactory) checkConfig() error {
 	o := factory.Options
 	// 检查app name
 	if o.AppName == "" {
-		return fmt.Errorf("[%w] app name 不能为空", ErrRegistryOption)
+		return fmt.Errorf("[%w] app name must be not empty", ErrRegistryOption)
 	}
 
 	// 设置默认检测间隔
@@ -88,7 +88,7 @@ func (factory *etcdRegistryFactory) checkConfig() error {
 	}
 
 	if o.Interval > time.Duration(o.LeaseTTL)*time.Second {
-		return fmt.Errorf("[%w] 检测间隔不能大于租约时长", ErrRegistryOption)
+		return fmt.Errorf("[%w] Interval can not largeer than LeaseTTL", ErrRegistryOption)
 	}
 
 	if o.Logger == nil {
@@ -99,7 +99,7 @@ func (factory *etcdRegistryFactory) checkConfig() error {
 	// etcd 配置校验以及设置默认值
 	defaultTimeout := 5 * time.Second
 	if o.EtcdConfig == nil || len(o.EtcdConfig.Endpoints) <= 0 {
-		return fmt.Errorf("[%w] 没有指定etcd endpoints", ErrRegistryOption)
+		return fmt.Errorf("[%w] did not specify etcd endpoints", ErrRegistryOption)
 	}
 
 	o.EtcdConfig.Logger = o.Logger

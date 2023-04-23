@@ -3,7 +3,7 @@
     {
       "server_app": "testApp",
       "schema": "etcd",
-      "etcd_config": {"endpoints": ["l-mika1.ops.dev.cn0:2379"]}
+      "etcd_config": {"endpoints": ["etcd.server.addr:2379"]}
     }
   ]
 }

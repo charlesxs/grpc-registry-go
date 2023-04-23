@@ -58,13 +58,13 @@ func (gs *GrpcServer) WithServerOptions(options ...grpc.ServerOption) *GrpcServe
 
 func (gs *GrpcServer) Build() (*GrpcServer, error) {
 	if gs.config == nil {
-		return nil, fmt.Errorf("[%w]初始化grpc gserver 错误, config配置没有初始化", ErrServerInit)
+		return nil, fmt.Errorf("[%w] server config uninitialized", ErrServerInit)
 	}
 
 	// init logger
 	if gs.logger == nil {
 		if logger, err := zap.NewProduction(); err != nil {
-			return nil, fmt.Errorf("[%w]初始化日志错误, err=%s", ErrServerInit, err)
+			return nil, fmt.Errorf("[%w] init logger error, err=%s", ErrServerInit, err)
 		} else {
 			gs.logger = logger
 			gs.config.Logger = logger
@@ -74,7 +74,7 @@ func (gs *GrpcServer) Build() (*GrpcServer, error) {
 	// get local addr
 	addrs, err := LocalAddrs()
 	if err != nil {
-		return nil, fmt.Errorf("[%w] 获取本机ip地址错误, err=%s", ErrServerInit, err)
+		return nil, fmt.Errorf("[%w] fetch local address error, err=%s", ErrServerInit, err)
 	}
 	gs.localAddrs = addrs
 
@@ -155,7 +155,7 @@ func (gs *GrpcServer) buildRegistry() (registry.IRegistry, error) {
 	schema := registry.Schema(gs.config.Schema)
 	factory, ok := registry.Factories[schema]
 	if !ok {
-		return nil, fmt.Errorf("[%w]不支持对应的schema", ErrServerInit)
+		return nil, fmt.Errorf("[%w] unsupport schema", ErrServerInit)
 	}
 
 	err := factory.BuildOptions(gs.config)

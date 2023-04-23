@@ -14,6 +14,7 @@ func initConfig() (*config.ServerConfig, error) {
 	return cfg, utils.ReadConfig("server_config.json", cfg)
 }
 
+// 服务实现
 type greeterServiceImpl struct {
 	hello.UnimplementedGreeterServer
 }

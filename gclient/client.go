@@ -53,13 +53,13 @@ func (gc *GrpcClient) WithDialOptions(options ...grpc.DialOption) *GrpcClient {
 
 func (gc *GrpcClient) Build() (*GrpcClient, error) {
 	if gc.config == nil {
-		return nil, fmt.Errorf("[%w]config配置没有初始化", ErrConfig)
+		return nil, fmt.Errorf("[%w] client config uninitialized", ErrConfig)
 	}
 
 	// init logger
 	if gc.logger == nil {
 		if logger, err := zap.NewProduction(); err != nil {
-			return nil, fmt.Errorf("[%w]初始化日志错误, err=%s", ErrClientInit, err)
+			return nil, fmt.Errorf("[%w] init logger error, err=%s", ErrClientInit, err)
 		} else {
 			gc.logger = logger
 		}
@@ -89,10 +89,6 @@ func (gc *GrpcClient) Build() (*GrpcClient, error) {
 
 func (gc *GrpcClient) GetConn(serverAppName string) *grpc.ClientConn {
 	if conn, ok := gc.conns[serverAppName]; ok {
-		// 查看生效的选项
-		//rv := reflect.ValueOf(conn).Elem()
-		//fmt.Println(rv.FieldByName("dopts"))
-
 		return conn
 	}
 	return nil
@@ -101,7 +97,7 @@ func (gc *GrpcClient) GetConn(serverAppName string) *grpc.ClientConn {
 func (gc *GrpcClient) createConn(serverCfg *config.RpcServerConfig) (*grpc.ClientConn, error) {
 	factory, ok := Factories[serverCfg.Schema]
 	if !ok {
-		return nil, fmt.Errorf("不支持的schema, schema=%s", serverCfg.Schema)
+		return nil, fmt.Errorf("unsupport schema, schema=%s", serverCfg.Schema)
 	}
 
 	err := factory.BuildOptions(gc.ctx, serverCfg)

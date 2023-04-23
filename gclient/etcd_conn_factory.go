@@ -29,7 +29,7 @@ func newEtcdConnFactory() *etcdConnFactory {
 func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, options ...grpc.DialOption) (*grpc.ClientConn, error) {
 	cfg, ok := factory.Options[serverCfg.ServerApp]
 	if !ok {
-		return nil, fmt.Errorf("[%w] 没有指定此应用的配置, appName=%s", ErrCreateConn, serverCfg.ServerApp)
+		return nil, fmt.Errorf("[%w] not found server app config, appName=%s", ErrCreateConn, serverCfg.ServerApp)
 	}
 
 	if err := factory.checkConfig(serverCfg); err != nil {
@@ -38,11 +38,11 @@ func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, op
 
 	etcdClient, err := clientv3.New(*cfg.EtcdConfig)
 	if err != nil {
-		return nil, fmt.Errorf("[%w] 创建etcd链接失败, err=%s", ErrCreateConn, err)
+		return nil, fmt.Errorf("[%w] etcd client init error, err=%s", ErrCreateConn, err)
 	}
 	builder, err := resolver.NewBuilder(etcdClient)
 	if err != nil {
-		return nil, fmt.Errorf("[%w] 构建etcd resolver builder 失败, err=%s", ErrCreateConn, err)
+		return nil, fmt.Errorf("[%w] build etcd resolver builder error, err=%s", ErrCreateConn, err)
 	}
 
 	// 加入resolvers
@@ -58,7 +58,7 @@ func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, op
 func (factory *etcdConnFactory) BuildOptions(ctx context.Context, serverCfg *config.RpcServerConfig) error {
 	c := serverCfg.EtcdConfig
 	if c == nil {
-		return fmt.Errorf("[%w]未找到etcd config", ErrConfigNotFound)
+		return fmt.Errorf("[%w] not found etcd config", ErrConfigNotFound)
 	}
 
 	etcdConnConfig := &EtcdConnOptions{
@@ -84,7 +84,7 @@ func (factory *etcdConnFactory) BuildOptions(ctx context.Context, serverCfg *con
 
 func (factory *etcdConnFactory) checkConfig(serverCfg *config.RpcServerConfig) error {
 	if serverCfg.ServerApp == "" {
-		return fmt.Errorf("[%w]没有指定 gserver appName", ErrConfig)
+		return fmt.Errorf("[%w] did not specify app name", ErrConfig)
 	}
 
 	c := factory.Options[serverCfg.ServerApp]
@@ -92,7 +92,7 @@ func (factory *etcdConnFactory) checkConfig(serverCfg *config.RpcServerConfig) e
 	// etcd 配置校验以及设置默认值
 	defaultTimeout := 5 * time.Second
 	if c.EtcdConfig == nil || len(c.EtcdConfig.Endpoints) <= 0 {
-		return fmt.Errorf("[%w] 没有指定etcd endpoints", ErrConfig)
+		return fmt.Errorf("[%w] did not specify etcd endpoints", ErrConfig)
 	}
 
 	if c.EtcdConfig.DialTimeout == 0 {

@@ -15,7 +15,7 @@ func TestClient(t *testing.T) {
 				ServerApp: "testApp",
 				Schema:    "etcd",
 				EtcdConfig: &config.EtcdConfig{
-					Endpoints: []string{"etcd.server.addr"},
+					Endpoints: []string{"etcd.server.addr:2379"},
 				},
 			},
 		},

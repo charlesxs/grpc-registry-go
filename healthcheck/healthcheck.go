@@ -21,7 +21,7 @@ func NewFileHealth(fpath string) *fileHealthChecker {
 }
 
 func (fh *fileHealthChecker) IsHealth() bool {
-	_, err := os.Stat(fh.fpath) //os.Stat 获取文件信息
+	_, err := os.Stat(fh.fpath)
 	if err != nil {
 		return false
 	}
