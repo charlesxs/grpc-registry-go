@@ -1,0 +1,8 @@
+{
+  "app_name": "testApp",
+  "port": 8081,
+  "schema": "etcd",
+  "etcd_registry_config": {
+    "endpoints": ["l-mika1.ops.dev.cn0:2379"]
+  }
+}

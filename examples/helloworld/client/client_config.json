@@ -1,0 +1,9 @@
+{
+  "servers_discovery": [
+    {
+      "server_app": "testApp",
+      "schema": "etcd",
+      "etcd_config": {"endpoints": ["l-mika1.ops.dev.cn0:2379"]}
+    }
+  ]
+}

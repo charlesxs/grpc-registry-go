@@ -4,38 +4,29 @@ import (
 	"context"
 	"fmt"
 	"github.com/charlesxs/grpc-registry-go/config"
-	"gitlab.corp.qunar.com/tcdev/qconfig-go/common/param"
-	"gitlab.corp.qunar.com/tcdev/qconfig-go/qconfig"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"log"
 	"testing"
+	"time"
 )
 
-const (
-	testAppCode = "ops_watcher_gwhb"
-	testToken   = "BvetjV3K+Mj6FJ6Qigy+yfc9AyTZfjA/0vlOEq1ZlvhF/csWuT77AN7PMtnT4H7IgiEdT0WlYDEhCTn922tY+HfuMSpzeOgMoTJbm0wpDpdKOgxN29AKf9vU69GjpLOEPTs7YHY1iC3DwuzEESCmrt7A0IW1/Eybxd4EstBFno4="
-)
-
-func TestServer(t *testing.T) {
-	clientParam := param.QConfigClientParam{
-		AppInfo: param.AppInfoParam{
-			AppCode: testAppCode,
-			Token:   testToken,
+func TestClient(t *testing.T) {
+	cfg := &config.ClientConfig{
+		ServersDiscovery: []*config.RpcServerConfig{
+			{
+				ServerApp: "testApp",
+				Schema:    "etcd",
+				EtcdConfig: &config.EtcdConfig{
+					Endpoints: []string{"etcd.server.addr"},
+				},
+			},
 		},
 	}
 
-	err := qconfig.Init(clientParam, param.QConfigFiles{
-		config.ClientConfigFile: &config.ClientConfig,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	client, err := New().
-		WithContext(context.Background()).
-		WithDialOptions(grpc.WithTransportCredentials(insecure.NewCredentials())).
+	client, _ := New(cfg).
+		WithContext(ctx).
 		Build()
 
-	fmt.Println(client.GetConn(testAppCode))
+	fmt.Println(client.GetConn("testApp"))
 }

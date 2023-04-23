@@ -27,9 +27,9 @@ func newEtcdConnFactory() *etcdConnFactory {
 }
 
 func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, options ...grpc.DialOption) (*grpc.ClientConn, error) {
-	cfg, ok := factory.Options[serverCfg.ServerAppCode]
+	cfg, ok := factory.Options[serverCfg.ServerApp]
 	if !ok {
-		return nil, fmt.Errorf("[%w] 没有指定此应用的配置, appCode=%s", ErrCreateConn, serverCfg.ServerAppCode)
+		return nil, fmt.Errorf("[%w] 没有指定此应用的配置, appName=%s", ErrCreateConn, serverCfg.ServerApp)
 	}
 
 	if err := factory.checkConfig(serverCfg); err != nil {
@@ -50,7 +50,7 @@ func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, op
 
 	return grpc.DialContext(
 		cfg.ctx,
-		fmt.Sprintf("%s:///%s", serverCfg.Schema, serverCfg.ServerAppCode),
+		fmt.Sprintf("%s:///%s", serverCfg.Schema, serverCfg.ServerApp),
 		options...,
 	)
 }
@@ -78,16 +78,16 @@ func (factory *etcdConnFactory) BuildOptions(ctx context.Context, serverCfg *con
 	if c.DialKeepAliveTimeout > 0 {
 		etcdConnConfig.EtcdConfig.DialKeepAliveTimeout = time.Duration(c.DialKeepAliveTimeout) * time.Second
 	}
-	factory.Options[serverCfg.ServerAppCode] = etcdConnConfig
+	factory.Options[serverCfg.ServerApp] = etcdConnConfig
 	return nil
 }
 
 func (factory *etcdConnFactory) checkConfig(serverCfg *config.RpcServerConfig) error {
-	if serverCfg.ServerAppCode == "" {
-		return fmt.Errorf("[%w]没有指定 gserver appcode", ErrConfig)
+	if serverCfg.ServerApp == "" {
+		return fmt.Errorf("[%w]没有指定 gserver appName", ErrConfig)
 	}
 
-	c := factory.Options[serverCfg.ServerAppCode]
+	c := factory.Options[serverCfg.ServerApp]
 
 	// etcd 配置校验以及设置默认值
 	defaultTimeout := 5 * time.Second

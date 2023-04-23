@@ -14,6 +14,7 @@ import (
 // GrpcServer 对象应该全局单例，封装了grpc 注册中心以及服务注册
 type GrpcServer struct {
 	server *grpc.Server
+	config *config.ServerConfig
 
 	registry    registry.IRegistry // 注册中心
 	healthcheck bool               // 指定是否遵循healthcheck协议, 默认true即遵循 (检测是否有healthcheck.html，有的话才将自己注册到注册中心)
@@ -26,12 +27,13 @@ type GrpcServer struct {
 	logger *zap.Logger
 }
 
-func New() *GrpcServer {
+func New(cfg *config.ServerConfig) *GrpcServer {
 	return &GrpcServer{
 		defaultOptions: []grpc.ServerOption{
 			grpc.ConnectionTimeout(60 * time.Second),
 		},
 		healthcheck: true,
+		config:      cfg,
 	}
 }
 
@@ -43,6 +45,7 @@ func (gs *GrpcServer) WithDisableHealthcheck() *GrpcServer {
 
 func (gs *GrpcServer) WithLogger(logger *zap.Logger) *GrpcServer {
 	gs.logger = logger
+	gs.config.Logger = logger
 	return gs
 }
 
@@ -52,9 +55,8 @@ func (gs *GrpcServer) WithServerOptions(options ...grpc.ServerOption) *GrpcServe
 }
 
 func (gs *GrpcServer) Build() (*GrpcServer, error) {
-	if config.ServerConfig == nil {
-		return nil, fmt.Errorf("[%w]初始化grpc gserver 错误, qconfig配置没有初始化, config_file=%s",
-			ErrServerInit, config.ServerConfigFile)
+	if gs.config == nil {
+		return nil, fmt.Errorf("[%w]初始化grpc gserver 错误, config配置没有初始化", ErrServerInit)
 	}
 
 	// init logger
@@ -63,6 +65,7 @@ func (gs *GrpcServer) Build() (*GrpcServer, error) {
 			return nil, fmt.Errorf("[%w]初始化日志错误, err=%s", ErrServerInit, err)
 		} else {
 			gs.logger = logger
+			gs.config.Logger = logger
 		}
 	}
 
@@ -88,8 +91,8 @@ func (gs *GrpcServer) Build() (*GrpcServer, error) {
 
 	// 初始化 checker
 	hcInterval := 3 * time.Second // 默认检测间隔是3秒
-	if config.ServerConfig.HealthcheckInterval > 0 {
-		hcInterval = time.Duration(config.ServerConfig.HealthcheckInterval) * time.Second
+	if gs.config.HealthcheckInterval > 0 {
+		hcInterval = time.Duration(gs.config.HealthcheckInterval) * time.Second
 	}
 	gs.checker = healthcheck.NewChecker(hcInterval, gs.register, gs.unRegister, gs.logger)
 
@@ -102,7 +105,7 @@ func (gs *GrpcServer) Run() error {
 	}
 
 	// 启动grpc gserver
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.ServerConfig.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", gs.config.Port))
 	if err != nil {
 		return err
 	}
@@ -130,7 +133,7 @@ func (gs *GrpcServer) registerWithHC() error {
 func (gs *GrpcServer) register() error {
 	// 注册本机ip
 	for _, addr := range gs.localAddrs {
-		if err := gs.registry.Register(addr, config.ServerConfig.Port, nil); err != nil {
+		if err := gs.registry.Register(addr, gs.config.Port, nil); err != nil {
 			return err
 		}
 	}
@@ -138,9 +141,8 @@ func (gs *GrpcServer) register() error {
 }
 
 func (gs *GrpcServer) unRegister() error {
-	port := config.ServerConfig.Port
 	for _, addr := range gs.localAddrs {
-		if err := gs.registry.Unregister(addr, port); err != nil {
+		if err := gs.registry.Unregister(addr, gs.config.Port); err != nil {
 			return err
 		}
 	}
@@ -148,13 +150,13 @@ func (gs *GrpcServer) unRegister() error {
 }
 
 func (gs *GrpcServer) buildRegistry() (registry.IRegistry, error) {
-	schema := registry.Schema(config.ServerConfig.Schema)
+	schema := registry.Schema(gs.config.Schema)
 	factory, ok := registry.Factories[schema]
 	if !ok {
 		return nil, fmt.Errorf("[%w]不支持对应的schema", ErrServerInit)
 	}
 
-	err := factory.BuildOptions(gs.logger)
+	err := factory.BuildOptions(gs.config)
 	if err != nil {
 		return nil, err
 	}

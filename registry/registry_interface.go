@@ -1,6 +1,8 @@
 package registry
 
-import "go.uber.org/zap"
+import (
+	"github.com/charlesxs/grpc-registry-go/config"
+)
 
 // IRegistry 接口
 type IRegistry interface {
@@ -14,7 +16,7 @@ type IRegistry interface {
 // IRegistryFactory registry工厂，用于创建不同的registry
 type IRegistryFactory interface {
 	// BuildOptions 构建 registry 配置选项
-	BuildOptions(logger *zap.Logger) error
+	BuildOptions(cfg *config.ServerConfig) error
 
 	// CreateRegistry 创建 registry
 	CreateRegistry() (IRegistry, error)

@@ -4,31 +4,14 @@ import (
 	"context"
 	"github.com/charlesxs/grpc-registry-go/config"
 	hello "github.com/charlesxs/grpc-registry-go/examples/helloworld/stub"
+	"github.com/charlesxs/grpc-registry-go/examples/helloworld/utils"
 	"github.com/charlesxs/grpc-registry-go/gserver"
-	"gitlab.corp.qunar.com/tcdev/qconfig-go/common/param"
-	"gitlab.corp.qunar.com/tcdev/qconfig-go/qconfig"
 	"log"
 )
 
-const (
-	testAppCode = "ops_watcher_gwhb"
-	testToken   = "BvetjV3K+Mj6FJ6Qigy+yfc9AyTZfjA/0vlOEq1ZlvhF/csWuT77AN7PMtnT4H7IgiEdT0WlYDEhCTn922tY+HfuMSpzeOgMoTJbm0wpDpdKOgxN29AKf9vU69GjpLOEPTs7YHY1iC3DwuzEESCmrt7A0IW1/Eybxd4EstBFno4="
-)
-
-func init() {
-	clientParam := param.QConfigClientParam{
-		AppInfo: param.AppInfoParam{
-			AppCode: testAppCode,
-			Token:   testToken,
-		},
-	}
-
-	err := qconfig.Init(clientParam, param.QConfigFiles{
-		config.ServerConfigFile: &config.ServerConfig,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
+func initConfig() (*config.ServerConfig, error) {
+	cfg := &config.ServerConfig{}
+	return cfg, utils.ReadConfig("server_config.json", cfg)
 }
 
 type greeterServiceImpl struct {
@@ -41,8 +24,14 @@ func (g *greeterServiceImpl) SayHello(ctx context.Context, in *hello.HelloReques
 }
 
 func main() {
+	// 初始化配置
+	cfg, err := initConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	// 初始化 gserver
-	gs, err := gserver.New().WithDisableHealthcheck().Build()
+	gs, err := gserver.New(cfg).WithDisableHealthcheck().Build()
 	if err != nil {
 		log.Fatalln(err)
 	}

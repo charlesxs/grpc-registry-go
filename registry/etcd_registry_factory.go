@@ -22,15 +22,15 @@ type etcdRegistryFactory struct {
 }
 
 // BuildOptions 从qconfig中构建registry配置
-func (factory *etcdRegistryFactory) BuildOptions(logger *zap.Logger) error {
-	etcdConfig := config.ServerConfig.EtcdRegistryConfig
+func (factory *etcdRegistryFactory) BuildOptions(cfg *config.ServerConfig) error {
+	etcdConfig := cfg.EtcdRegistryConfig
 	if etcdConfig == nil {
 		return fmt.Errorf("[%w] 未找到etcd registry config", ErrConfigNotFound)
 	}
 
 	o := &EtcdRegistryOptions{
-		AppName: config.ServerConfig.AppCode,
-		Logger:  logger,
+		AppName: cfg.AppName,
+		Logger:  cfg.Logger,
 		EtcdConfig: &clientv3.Config{
 			Endpoints: etcdConfig.Endpoints,
 			Username:  etcdConfig.Username,
