@@ -4,8 +4,6 @@
 
 ### Overview
 
------
-
 grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基于健康检查的自动上下线。
 grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，后续可实现其他类型的注册中心。
 
@@ -18,15 +16,16 @@ grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实
 
 - 配置server端 config
 
+> 最小化配置, 更多配置请查看 [grpc-registry-go/server/server_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/server_config.go)
+
 ```json
-最小化配置, 更多配置请查看 grpc-registry-go/server/server_config.go
 
 {
-  "app_name": "server_app_name",    // 服务app name
-  "port": 8888,                   // 服务监听的port
-  "schema": "etcd",               // 指定registry 类型, 当前仅支持 etcd
-  "etcd_registry_config": {       // 指定etc 注册中心的配置
-    "endpoints": ["etcd.server.addr"],  //指定 etcd地址，可以是多个
+  "app_name": "server_app_name",
+  "port": 8888,
+  "schema": "etcd",
+  "etcd_registry_config": {
+    "endpoints": ["etcd.server.addr"]
   }
 }
 
@@ -96,16 +95,16 @@ func main() {
 
 - 配置 client 端config
 
-```json
-最小化配置， 更多配置请查看 grpc-registry-go/config/client_config.go
+> 最小化配置，更多配置请查看 [grpc-registry-go/config/client_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/client_config.go)
 
+```json
 {
-  "servers_discovery": [    // 指定服务端服务发现配置, 是个数组，可以指定多个app的 server discovery，如果调用多个app的rpc 服务的话
+  "servers_discovery": [
     {
-      "server_app": "serverAppName",   // 服务端的app名称, 因为注册中心是以应用维度进行服务发现，而非接口维度
-      "schema": "etcd",   // 指定registry 类型, 需要与server端一直， 当前仅支持 etcd
-      "etcd_config": {    // 指定etc 注册中心的配置
-        "endpoints": ["etcd.server.addr"] // 指定 etcd地址，可以是多个
+      "server_app": "serverAppName",
+      "schema": "etcd",
+      "etcd_config": {
+        "endpoints": ["etcd.server.addr"]
       }
     }
   ]
