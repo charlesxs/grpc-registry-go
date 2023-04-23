@@ -19,6 +19,7 @@ type GrpcServer struct {
 	registry    registry.IRegistry // 注册中心
 	healthcheck bool               // 指定是否遵循healthcheck协议, 默认true即遵循 (检测是否有healthcheck.html，有的话才将自己注册到注册中心)
 	checker     *healthcheck.Checker
+	hck         healthcheck.IHealthChecker
 
 	options        []grpc.ServerOption
 	defaultOptions []grpc.ServerOption
@@ -32,14 +33,15 @@ func New(cfg *config.ServerConfig) *GrpcServer {
 		defaultOptions: []grpc.ServerOption{
 			grpc.ConnectionTimeout(60 * time.Second),
 		},
-		healthcheck: true,
+		healthcheck: false,
 		config:      cfg,
 	}
 }
 
-// WithDisableHealthcheck 指定healthcheck选项为true, 遵循qunar healthcheck协议
-func (gs *GrpcServer) WithDisableHealthcheck() *GrpcServer {
-	gs.healthcheck = false
+// WithHealthcheck 指定healthcheck选项为true, 并且需要指定做业务检查的checker， checker 需要实现 healthcheck.IHealthChecker接口
+func (gs *GrpcServer) WithHealthcheck(checker healthcheck.IHealthChecker) *GrpcServer {
+	gs.hck = checker
+	gs.healthcheck = true
 	return gs
 }
 
@@ -94,7 +96,7 @@ func (gs *GrpcServer) Build() (*GrpcServer, error) {
 	if gs.config.HealthcheckInterval > 0 {
 		hcInterval = time.Duration(gs.config.HealthcheckInterval) * time.Second
 	}
-	gs.checker = healthcheck.NewChecker(hcInterval, gs.register, gs.unRegister, gs.logger)
+	gs.checker = healthcheck.NewChecker(hcInterval, gs.hck, gs.register, gs.unRegister, gs.logger)
 
 	return gs, nil
 }

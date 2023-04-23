@@ -2,28 +2,28 @@ package healthcheck
 
 import (
 	"os"
-	"path/filepath"
 )
 
-var HealthcheckFile string
-
-func init() {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		panic(err)
-	}
-
-	HealthcheckFile = filepath.Join(dir, "healthcheck.html")
+// IHealthChecker 实现健康检测的接口
+type IHealthChecker interface {
+	// IsHealth 可用于做业务检查，其中 true 表示健康, false表示不健康
+	IsHealth() bool
 }
 
-func exists(path string) bool {
-	_, err := os.Stat(path) //os.Stat 获取文件信息
+type fileHealthChecker struct {
+	fpath string
+}
+
+func NewFileHealth(fpath string) *fileHealthChecker {
+	return &fileHealthChecker{
+		fpath: fpath,
+	}
+}
+
+func (fh *fileHealthChecker) IsHealth() bool {
+	_, err := os.Stat(fh.fpath) //os.Stat 获取文件信息
 	if err != nil {
 		return false
 	}
 	return true
-}
-
-func IsHealth() bool {
-	return exists(HealthcheckFile)
 }

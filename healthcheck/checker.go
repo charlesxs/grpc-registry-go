@@ -14,12 +14,16 @@ type Checker struct {
 	healthFunc   func() error  // 状态改变为 health 时执行此function
 	unHealthFunc func() error  // 状态变为 unHealth 时执行此function
 
+	hck    IHealthChecker // 定义健康检测的checker
 	ctx    context.Context
 	cancel context.CancelFunc
 	logger *zap.Logger
 }
 
-func NewChecker(interval time.Duration, healthFunc func() error, unHealthFunc func() error, logger *zap.Logger) *Checker {
+func NewChecker(interval time.Duration, hck IHealthChecker,
+	healthFunc func() error, unHealthFunc func() error,
+	logger *zap.Logger) *Checker {
+
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Checker{
 		state:        atomic.NewBool(false),
@@ -27,6 +31,7 @@ func NewChecker(interval time.Duration, healthFunc func() error, unHealthFunc fu
 		healthFunc:   healthFunc,
 		unHealthFunc: unHealthFunc,
 
+		hck:    hck,
 		ctx:    ctx,
 		cancel: cancel,
 		logger: logger,
@@ -61,7 +66,7 @@ func (c *Checker) CheckForever() {
 		}
 
 		var err error
-		if IsHealth() {
+		if c.hck.IsHealth() {
 			if c.stateChanged(true) {
 				if err = c.healthFunc(); err != nil {
 					c.logger.Error("[healthcheck] run health function error ", zap.Error(err))
