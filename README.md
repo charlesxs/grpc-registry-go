@@ -1,6 +1,14 @@
-## qgrpc-go 封装了带有注册中心功能的grpc库
+## grpc-registry-go 封装了带有注册中心功能的grpc库
 
-具体例子请参考: [qgrpc-go/examples/hellworld](http://gitlab.corp.qunar.com/wares/qgrpc-go/tree/master/examples/helloworld)
+具体例子请参考: [grpc-registry-go/examples/hellworld](https://github.com/charlesxs/grpc-registry-go/tree/master/examples/helloworld)
+
+### Overview
+
+-----
+
+grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基于健康检查的自动上下线。
+grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，后续可实现其他类型的注册中心。
+
 
 ### QuickStart
 
@@ -8,17 +16,17 @@
 
 **Server端**
 
-- 配置 qconfig, qconfig 文件名是固定的 grpc_server_config.json
+- 配置server端 config
 
 ```json
-最小化配置, 更多配置请查看 qgrpc-go/server/server_config.go
+最小化配置, 更多配置请查看 grpc-registry-go/server/server_config.go
 
 {
-  "app_code": "serverAppCode",    // 服务appCode
+  "app_name": "server_app_name",    // 服务app name
   "port": 8888,                   // 服务监听的port
   "schema": "etcd",               // 指定registry 类型, 当前仅支持 etcd
   "etcd_registry_config": {       // 指定etc 注册中心的配置
-    "endpoints": ["l-mika1.ops.dev.cn0:2379"],  //指定 etcd地址，可以是多个
+    "endpoints": ["etcd.server.addr"],  //指定 etcd地址，可以是多个
   }
 }
 
@@ -86,18 +94,18 @@ func main() {
 
 **Client端**
 
-- 配置 qconfig, qconfig 文件名是固定的 grpc_client_config.json
+- 配置 client 端config
 
 ```json
-最小化配置， 更多配置请查看 qgrpc-go/config/client_config.go
+最小化配置， 更多配置请查看 grpc-registry-go/config/client_config.go
 
 {
-  "servers_discovery": [    // 指定服务端服务发现配置, 是个数组，可以指定多个appCode server discovery，如果调用多个appCode的rpc 服务的话
+  "servers_discovery": [    // 指定服务端服务发现配置, 是个数组，可以指定多个app的 server discovery，如果调用多个app的rpc 服务的话
     {
-      "server_app_code": "ops_watcher_gwhb",   // 服务端的appCode名, 因为注册中心是以应用维度进行服务发现，而非接口维度
+      "server_app": "serverAppName",   // 服务端的app名称, 因为注册中心是以应用维度进行服务发现，而非接口维度
       "schema": "etcd",   // 指定registry 类型, 需要与server端一直， 当前仅支持 etcd
       "etcd_config": {    // 指定etc 注册中心的配置
-        "endpoints": ["l-mika1.ops.dev.cn0:2379"] // 指定 etcd地址，可以是多个
+        "endpoints": ["etcd.server.addr"] // 指定 etcd地址，可以是多个
       }
     }
   ]
@@ -109,19 +117,20 @@ func main() {
 
 ```go
 func main() {
-	// 初始化qconfig
+	// 初始化config
+    cfg := initConfig()
 	....
 	
 	// 初始化 gclient
-	c, err := gclient.New().Build()
+	c, err := gclient.New(cfg).Build()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	greeterClient := hello.NewGreeterClient(c.GetConn(testAppCode))
+	greeterClient := hello.NewGreeterClient(c.GetConn("serverApp"))
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := greeterClient.SayHello(ctx, &hello.HelloRequest{Name: "xs.xiao"})
+	r, err := greeterClient.SayHello(ctx, &hello.HelloRequest{Name: "charles"})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -177,8 +186,4 @@ grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`)
 
 2. 如果要实现其他类型的服务发现, 只需要实现 IConnFactory 接口即可
 ```
-
-
-
-
 
