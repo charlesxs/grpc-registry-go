@@ -33,9 +33,9 @@ grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实
 
 - protobuf声明一个rpc 服务，并暴露服务端 stub
 
-```protobuf
-helloworld/stub/hello.proto
+> example 定义[grpc-registry-go/examples/hellworld/stub/hello.proto](https://github.com/charlesxs/grpc-registry-go/blob/master/examples/helloworld/stub/hello.proto)
 
+```protobuf
 syntax = "proto3";
 
 package hello;
