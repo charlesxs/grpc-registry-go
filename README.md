@@ -5,8 +5,8 @@
 ### Overview
 
 grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基于健康检查的自动上下线。
-grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，后续可实现其他类型的注册中心。
-
+grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，
+如果要实现其他类型的registry, 只需要实现 IRegistry 和 IRegistryFactory 两个接口即可, 如果要实现其他类型的服务发现, 只需要实现 IConnFactory 接口即可
 
 ### QuickStart
 
@@ -74,10 +74,10 @@ func (g *greeterServiceImpl) SayHello(ctx context.Context, in *hello.HelloReques
 
 func main() {
 	// 初始化qconfig
-	....
+	cfg := ....
 	
 	// 初始化 gserver
-	gs, err := gserver.New().WithDisableHealthcheck().Build()
+	gs, err := gserver.New(cfg).WithDisableHealthcheck().Build()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -117,8 +117,7 @@ func main() {
 ```go
 func main() {
 	// 初始化config
-    cfg := initConfig()
-	....
+    cfg := ....
 	
 	// 初始化 gclient
 	c, err := gclient.New(cfg).Build()
@@ -147,11 +146,13 @@ func main() {
 特性：
 
 ```go
-1. WithDisableHealthcheck() 
-禁用healthcheck协议，默认支持healthcheck协议，只有应用的 healthcheck.html存在才会向注册中心注册自己
+1. WithHealthcheck(checker healthcheck.IHealthChecker)
+支持业务健康检查, 业务只需要实现 healthcheck.IHealthChecker 接口即可, 当IsHealth() 返回为true时代表业务正常,gserver便将自己注册到应用中心
+当 IsHealtch() 返回false时代表业务不正常, gserver便将自己从应用中心债除掉.
+默认没有healthcheck
 
 2. WithServerOptions(options ...grpc.ServerOption)
-指定自定义的grpc.ServerOption， 默认的grpc.ServerOption有 grpc.ConnectionTimeout(60 * time.Second), 60s连接超时
+指定自定义的grpc.ServerOption, 默认的grpc.ServerOption有 grpc.ConnectionTimeout(60 * time.Second), 60s连接超时
 
 3. WithLogger(logger *zap.Logger)
 指定logger
@@ -176,13 +177,5 @@ grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`)
 
 3. WithContext(ctx context.Context)
 指定 context, 此context会被用于连接超时使用
-```
-
-### 其他
-
-```go
-1. 如果要实现其他类型的registry, 只需要实现 IRegistry 和 IRegistryFactory 两个接口即可
-
-2. 如果要实现其他类型的服务发现, 只需要实现 IConnFactory 接口即可
 ```
 
