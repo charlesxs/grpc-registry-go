@@ -25,7 +25,7 @@ grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实
   "port": 8888,
   "schema": "etcd",
   "etcd_registry_config": {
-    "endpoints": ["etcd.server.addr"]
+    "endpoints": ["etcd.server.addr:2379"]
   }
 }
 
@@ -104,7 +104,7 @@ func main() {
       "server_app": "serverAppName",
       "schema": "etcd",
       "etcd_config": {
-        "endpoints": ["etcd.server.addr"]
+        "endpoints": ["etcd.server.addr:2379"]
       }
     }
   ]
