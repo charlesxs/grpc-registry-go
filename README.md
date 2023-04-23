@@ -77,7 +77,7 @@ func main() {
 	cfg := ....
 	
 	// 初始化 gserver
-	gs, err := gserver.New(cfg).WithDisableHealthcheck().Build()
+	gs, err := gserver.New(cfg).Build()
 	if err != nil {
 		log.Fatalln(err)
 	}
