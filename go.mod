@@ -1,4 +1,4 @@
-module gitlab.corp.qunar.com/qgrpc-go
+module github.com/charlesxs/grpc-registry-go
 
 go 1.18
 

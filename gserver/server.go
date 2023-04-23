@@ -2,9 +2,9 @@ package gserver
 
 import (
 	"fmt"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
-	"gitlab.corp.qunar.com/qgrpc-go/healthcheck"
-	"gitlab.corp.qunar.com/qgrpc-go/registry"
+	"github.com/charlesxs/grpc-registry-go/config"
+	"github.com/charlesxs/grpc-registry-go/healthcheck"
+	"github.com/charlesxs/grpc-registry-go/registry"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"

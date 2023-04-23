@@ -2,7 +2,7 @@ package registry
 
 import (
 	"fmt"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
+	"github.com/charlesxs/grpc-registry-go/config"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.uber.org/zap"
 	"time"

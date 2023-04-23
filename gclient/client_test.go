@@ -3,7 +3,7 @@ package gclient
 import (
 	"context"
 	"fmt"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
+	"github.com/charlesxs/grpc-registry-go/config"
 	"gitlab.corp.qunar.com/tcdev/qconfig-go/common/param"
 	"gitlab.corp.qunar.com/tcdev/qconfig-go/qconfig"
 	"google.golang.org/grpc"

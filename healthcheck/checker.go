@@ -2,7 +2,6 @@ package healthcheck
 
 import (
 	"context"
-	"gitlab.corp.qunar.com/tcdev/qconfig-go/common/logger"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 	"runtime"
@@ -56,7 +55,7 @@ func (c *Checker) CheckForever() {
 	for {
 		select {
 		case <-c.ctx.Done():
-			logger.Info("[healthcheck] checker exit")
+			c.logger.Info("[healthcheck] checker exit")
 			return
 		case <-ticker.C:
 		}
@@ -65,7 +64,7 @@ func (c *Checker) CheckForever() {
 		if IsHealth() {
 			if c.stateChanged(true) {
 				if err = c.healthFunc(); err != nil {
-					logger.Error("[healthcheck] run health function error ", zap.Error(err))
+					c.logger.Error("[healthcheck] run health function error ", zap.Error(err))
 				}
 			}
 			continue
@@ -73,7 +72,7 @@ func (c *Checker) CheckForever() {
 
 		if c.stateChanged(false) {
 			if err = c.unHealthFunc(); err != nil {
-				logger.Error("[healthcheck] run unHealth function error ", zap.Error(err))
+				c.logger.Error("[healthcheck] run unHealth function error ", zap.Error(err))
 			}
 		}
 	}

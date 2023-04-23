@@ -3,7 +3,7 @@ package gclient
 import (
 	"context"
 	"fmt"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
+	"github.com/charlesxs/grpc-registry-go/config"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

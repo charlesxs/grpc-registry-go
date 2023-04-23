@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
-	hello "gitlab.corp.qunar.com/qgrpc-go/examples/helloworld/stub"
-	"gitlab.corp.qunar.com/qgrpc-go/gserver"
+	"github.com/charlesxs/grpc-registry-go/config"
+	hello "github.com/charlesxs/grpc-registry-go/examples/helloworld/stub"
+	"github.com/charlesxs/grpc-registry-go/gserver"
 	"gitlab.corp.qunar.com/tcdev/qconfig-go/common/param"
 	"gitlab.corp.qunar.com/tcdev/qconfig-go/qconfig"
 	"log"

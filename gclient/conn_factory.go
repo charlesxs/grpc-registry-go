@@ -2,7 +2,7 @@ package gclient
 
 import (
 	"context"
-	"gitlab.corp.qunar.com/qgrpc-go/config"
+	"github.com/charlesxs/grpc-registry-go/config"
 	"google.golang.org/grpc"
 )
 
