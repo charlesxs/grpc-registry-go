@@ -18,9 +18,8 @@ func TestChecker(t *testing.T) {
 		return nil
 	}
 
-	HealthcheckFile = "/tmp/healthcheck.html"
 	logger, _ := zap.NewProduction()
-	c := NewChecker(time.Second, healthFn, unHealthFn, logger)
+	c := NewChecker(time.Second, NewFileHealth("/tmp/healthcheck.html"), healthFn, unHealthFn, logger)
 	go c.CheckForever()
 
 	stop := make(chan struct{})
