@@ -147,9 +147,9 @@ func main() {
 
 ```go
 1. WithHealthcheck(checker healthcheck.IHealthChecker)
-支持业务健康检查, 业务只需要实现 healthcheck.IHealthChecker 接口即可, 当IsHealth() 返回为true时代表业务正常,gserver便将自己注册到应用中心
+支持业务健康检查, 业务只需要实现 healthcheck.IHealthChecker 接口即可, 当IsHealth() 返回为true时代表业务正常,gserver便将自己注册到注册中心
 当 IsHealtch() 返回false时代表业务不正常, gserver便将自己从应用中心债除掉.
-默认没有healthcheck
+默认没有healthcheck, server启动便将自己注册到注册中心
 
 2. WithServerOptions(options ...grpc.ServerOption)
 指定自定义的grpc.ServerOption, 默认的grpc.ServerOption有 grpc.ConnectionTimeout(60 * time.Second), 60s连接超时

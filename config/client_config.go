@@ -1,14 +1,14 @@
 package config
 
 type ClientConfig struct {
-	ServersDiscovery []*RpcServerConfig `mapstructure:"servers_discovery" json:"servers_discovery" yaml:"servers_discovery"`
-	BalancePolicy    string             `mapstructure:"balance_policy" json:"balance_policy" yaml:"balance_policy"`
+	ServersDiscovery []*RpcServerConfig `mapstructure:"servers_discovery" json:"servers_discovery" yaml:"servers_discovery"` // 封装了多应用服务发现, gclient针对每个应用创建一个 grpc.ClientConn
+	BalancePolicy    string             `mapstructure:"balance_policy" json:"balance_policy" yaml:"balance_policy"`          // 负载均衡策略, 默认为 round_robin
 }
 
 type RpcServerConfig struct {
-	ServerApp  string      `mapstructure:"server_app" json:"server_app" yaml:"server_app"` // 指定要连接的server端的app name
-	Schema     string      `mapstructure:"schema" json:"schema" yaml:"schema"`             // 指定registry 类型
-	EtcdConfig *EtcdConfig `mapstructure:"etcd_config" json:"etcd_config" yaml:"etcd_config"`
+	ServerApp  string      `mapstructure:"server_app" json:"server_app" yaml:"server_app"`    // 指定要连接的server端的app name
+	Schema     string      `mapstructure:"schema" json:"schema" yaml:"schema"`                // 指定registry 类型协议
+	EtcdConfig *EtcdConfig `mapstructure:"etcd_config" json:"etcd_config" yaml:"etcd_config"` // etcd 相关配置
 }
 
 type EtcdConfig struct {
