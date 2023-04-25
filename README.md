@@ -73,7 +73,7 @@ func (g *greeterServiceImpl) SayHello(ctx context.Context, in *hello.HelloReques
 }
 
 func main() {
-	// 初始化qconfig
+	// 初始化config
 	cfg := ....
 	
 	// 初始化 gserver
@@ -168,7 +168,7 @@ func main() {
 指定自定义的grpc.DialOption, 默认的DialOption 有
 // 默认通讯不指定证书
 grpc.WithTransportCredentials(insecure.NewCredentials())  
-// 默认的负载均衡策略是轮询, 若要更换策略，可以在qconfig grpc_client_config.json中的balance_policy中指定
+// 默认的负载均衡策略是轮询, 若要更换策略，可以在client config的BalancePolicy中指定
 grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`)
 注意: 通常不要自己指定resolvers grpc.WithResolvers(), resolver和对应的注册中心成对出现, gclient中已经默认实现了
 
