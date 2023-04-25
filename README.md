@@ -176,6 +176,6 @@ grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`)
 指定logger
 
 3. WithContext(ctx context.Context)
-指定 context, 此context会被用于连接超时使用
+指定 context, 此context会被用于 grpc.DialContext(ctx, ...)
 ```
 
