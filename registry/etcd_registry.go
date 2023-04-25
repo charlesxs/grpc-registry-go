@@ -81,16 +81,19 @@ func (r *etcdRegistry) Unregister(addr string, port int) error {
 }
 
 func (r *etcdRegistry) register(key string, ep endpoints.Endpoint) error {
+	ctx, cancel := context.WithTimeout(r.ctx, r.options.EtcdConfig.DialTimeout)
+	defer cancel()
+
 	// minimum lease TTL is ttl-second
-	resp, err := r.c.Grant(r.ctx, r.options.LeaseTTL)
+	resp, err := r.c.Grant(ctx, r.options.LeaseTTL)
 	if err != nil {
 		return fmt.Errorf("[%w] grant lease failed, error=%s", ErrRegistry, err.Error())
 	}
 
 	// 查看 key 是否存在, 存在则续租，不存在则创建并续租
-	_, err = r.c.Get(r.ctx, key)
+	_, err = r.c.Get(ctx, key)
 	if err == nil || err == rpctypes.ErrKeyNotFound {
-		return r.em.AddEndpoint(r.ctx, key, ep, clientv3.WithLease(resp.ID))
+		return r.em.AddEndpoint(ctx, key, ep, clientv3.WithLease(resp.ID))
 	}
 
 	return fmt.Errorf("[%w] register endpoint failed, error=%s, endpoint=%s", ErrRegistry, err.Error(), ep.Addr)
