@@ -10,18 +10,20 @@ type IHealthChecker interface {
 	IsHealth() bool
 }
 
+// 基于文件的健康检测，当某个文件存在时便认为服务Ok,将自己注册到注册中心，当文件不存在时便将自己从注册中心债除掉
+// 测试请看 checker_test.go
 type fileHealthChecker struct {
-	fpath string
+	filePath string
 }
 
-func NewFileHealth(fpath string) *fileHealthChecker {
+func NewFileHealth(filePath string) IHealthChecker {
 	return &fileHealthChecker{
-		fpath: fpath,
+		filePath: filePath,
 	}
 }
 
 func (fh *fileHealthChecker) IsHealth() bool {
-	_, err := os.Stat(fh.fpath)
+	_, err := os.Stat(fh.filePath)
 	if err != nil {
 		return false
 	}

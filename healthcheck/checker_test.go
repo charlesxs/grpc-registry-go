@@ -1,20 +1,20 @@
 package healthcheck
 
 import (
-	"fmt"
 	"go.uber.org/zap"
+	"log"
 	"testing"
 	"time"
 )
 
 func TestChecker(t *testing.T) {
 	healthFn := func() error {
-		fmt.Println("health")
+		log.Println("health")
 		return nil
 	}
 
 	unHealthFn := func() error {
-		fmt.Println("unHealth")
+		log.Println("unHealth")
 		return nil
 	}
 
