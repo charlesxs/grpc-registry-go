@@ -8,13 +8,19 @@ grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基�
 grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，
 如果要实现其他类型的registry, 只需要实现 IRegistry 和 IRegistryFactory 两个接口即可, 如果要实现其他类型的服务发现, 只需要实现 IConnFactory 接口即可
 
+### requisites
+
+- go >= 1.18
+- grpc-go >= 1.52.0
+- etcd-client >= 3.5.8
+
 ### QuickStart
 
 -----
 
 **Server端**
 
-- 配置server端 config
+- 配置server端 config (server_config.yaml)
 
 > 最小化配置, 更多配置请查看 [grpc-registry-go/server/server_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/server_config.go)
 
@@ -89,7 +95,7 @@ func main() {
 
 **Client端**
 
-- 配置 client 端config
+- 配置client端config (client_config.yaml)
 
 > 最小化配置，更多配置请查看 [grpc-registry-go/config/client_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/client_config.go)
 
