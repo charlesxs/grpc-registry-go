@@ -1,26 +1,19 @@
-## grpc-registry-go 封装了带有注册中心功能的grpc库
+## grpc-registry-go
 
 具体例子请参考: [grpc-registry-go/examples/helloworld](https://github.com/charlesxs/grpc-registry-go/tree/master/examples/helloworld)
 
-### Overview
+## Overview
 
-grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基于健康检查的自动上下线。
-grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现，
+grpc-registry-go 基于grpc-go之上封装了注册中心的功能，支持基于健康检查的自动上下线。 
+grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实现了etcd 方式的服务注册和服务发现。
+
 如果要实现其他类型的registry, 只需要实现 IRegistry 和 IRegistryFactory 两个接口即可, 如果要实现其他类型的服务发现, 只需要实现 IConnFactory 接口即可
 
-### requisites
+## Getting started
 
-- go >= 1.18
-- grpc-go >= 1.52.0
-- etcd-client >= 3.5.8
+### Server端
 
-### QuickStart
-
------
-
-**Server端**
-
-- 配置server端 config (server_config.yaml)
+1. 配置server端 config (server_config.yaml)
 
 > 最小化配置, 更多配置请查看 [grpc-registry-go/server/server_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/server_config.go)
 
@@ -33,7 +26,7 @@ etcd_registry_config:
     - 'etcd.server.addr:2379'
 ```
 
-- protobuf声明一个rpc 服务，并暴露服务端 stub
+2. protobuf声明一个rpc 服务，并暴露服务端 stub
 
 > example 定义[grpc-registry-go/examples/hellworld/stub/hello.proto](https://github.com/charlesxs/grpc-registry-go/blob/master/examples/helloworld/stub/hello.proto)
 
@@ -56,13 +49,13 @@ message HelloReply {
 }
 ```
 
-- 编译 protobuf
+3. 编译 protobuf
 
-```go
-$ protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative helloworld/stub/hello.proto
+```shell
+protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative helloworld/stub/hello.proto
 ```
 
-- 业务代码
+4. 业务代码
 
 ```go
 type greeterServiceImpl struct {
@@ -77,7 +70,7 @@ func (g *greeterServiceImpl) SayHello(ctx context.Context, in *hello.HelloReques
 func main() {
 	// 初始化config
 	cfg := ....
-	
+
 	// 初始化 gserver
 	gs, err := gserver.New(cfg).Build()
 	if err != nil {
@@ -93,9 +86,9 @@ func main() {
 
 ```
 
-**Client端**
+### Client端
 
-- 配置client端config (client_config.yaml)
+1. 配置client端config (client_config.yaml)
 
 > 最小化配置，更多配置请查看 [grpc-registry-go/config/client_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/client_config.go)
 
@@ -108,7 +101,7 @@ servers_discovery:
         - 'etcd.server.addr:2379'
 ```
 
-- 业务代码
+2. 业务代码
 
 ```go
 func main() {
@@ -133,9 +126,7 @@ func main() {
 
 ```
 
-### 指南
-
-----
+## 指南
 
 ### gserver
 
@@ -155,7 +146,7 @@ func main() {
 
 ```
 
- ### gclient
+### gclient
 
 特性:
 
