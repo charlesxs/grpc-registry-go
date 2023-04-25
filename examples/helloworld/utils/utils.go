@@ -1,24 +1,17 @@
 package utils
 
 import (
-	"encoding/json"
-	"io"
-	"os"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 )
 
 func ReadConfig(configFile string, cfg any) error {
-	f, err := os.Open(configFile)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	data, err := io.ReadAll(f)
+	d, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		return err
 	}
 
-	if err = json.Unmarshal(data, cfg); err != nil {
+	if err = yaml.Unmarshal(d, cfg); err != nil {
 		return err
 	}
 	return nil

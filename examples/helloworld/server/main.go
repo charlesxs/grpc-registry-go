@@ -11,7 +11,7 @@ import (
 
 func initConfig() (*config.ServerConfig, error) {
 	cfg := &config.ServerConfig{}
-	return cfg, utils.ReadConfig("server_config.json", cfg)
+	return cfg, utils.ReadConfig("server_config.yaml", cfg)
 }
 
 // 服务实现

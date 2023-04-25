@@ -18,17 +18,13 @@ grpc-registry-go 是以应用为维度的服务注册和服务发现，当前实
 
 > 最小化配置, 更多配置请查看 [grpc-registry-go/server/server_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/server_config.go)
 
-```json
-
-{
-  "app_name": "server_app_name",
-  "port": 8888,
-  "schema": "etcd",
-  "etcd_registry_config": {
-    "endpoints": ["etcd.server.addr:2379"]
-  }
-}
-
+```yaml
+app_name: testApp
+port: 8888
+schema: etcd
+etcd_registry_config:
+  endpoints:
+    - 'etcd.server.addr:2379'
 ```
 
 - protobuf声明一个rpc 服务，并暴露服务端 stub
@@ -97,19 +93,13 @@ func main() {
 
 > 最小化配置，更多配置请查看 [grpc-registry-go/config/client_config.go](https://github.com/charlesxs/grpc-registry-go/blob/master/config/client_config.go)
 
-```json
-{
-  "servers_discovery": [
-    {
-      "server_app": "serverAppName",
-      "schema": "etcd",
-      "etcd_config": {
-        "endpoints": ["etcd.server.addr:2379"]
-      }
-    }
-  ]
-}
-
+```yaml
+servers_discovery:
+  - server_app: testApp
+    schema: etcd
+    etcd_config:
+      endpoints:
+        - 'etcd.server.addr:2379'
 ```
 
 - 业务代码

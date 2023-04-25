@@ -12,7 +12,7 @@ import (
 
 func initConfig() (*config.ClientConfig, error) {
 	cfg := &config.ClientConfig{}
-	return cfg, utils.ReadConfig("client_config.json", cfg)
+	return cfg, utils.ReadConfig("client_config.yaml", cfg)
 }
 
 func main() {

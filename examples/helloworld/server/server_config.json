@@ -1,8 +1,0 @@
-{
-  "app_name": "testApp",
-  "port": 8888,
-  "schema": "etcd",
-  "etcd_registry_config": {
-    "endpoints": ["etcd.server.addr:2379"]
-  }
-}

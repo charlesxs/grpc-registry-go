@@ -1,9 +1,0 @@
-{
-  "servers_discovery": [
-    {
-      "server_app": "testApp",
-      "schema": "etcd",
-      "etcd_config": {"endpoints": ["etcd.server.addr:2379"]}
-    }
-  ]
-}

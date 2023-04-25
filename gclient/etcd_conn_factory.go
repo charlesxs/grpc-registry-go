@@ -41,12 +41,12 @@ func (factory *etcdConnFactory) CreateConn(serverCfg *config.RpcServerConfig, op
 		return nil, fmt.Errorf("[%w] etcd client init error, err=%s", ErrCreateConn, err)
 	}
 
-	// etcdClient connection test to avoid the resolver build stuck
+	// etcdClient connect test to avoid the resolver build stuck
 	ctx, cancel := context.WithTimeout(cfg.ctx, cfg.EtcdConfig.DialTimeout)
 	defer cancel()
 	_, err = etcdClient.Get(ctx, serverCfg.ServerApp)
 	if err != nil {
-		return nil, fmt.Errorf("[%w] etcd connection error, err=%s", ErrCreateConn, err)
+		return nil, fmt.Errorf("[%w] etcd connect error, err=%s", ErrCreateConn, err)
 	}
 
 	builder, err := resolver.NewBuilder(etcdClient)
