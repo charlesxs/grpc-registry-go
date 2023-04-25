@@ -1,6 +1,6 @@
 ## grpc-registry-go 封装了带有注册中心功能的grpc库
 
-具体例子请参考: [grpc-registry-go/examples/hellworld](https://github.com/charlesxs/grpc-registry-go/tree/master/examples/helloworld)
+具体例子请参考: [grpc-registry-go/examples/helloworld](https://github.com/charlesxs/grpc-registry-go/tree/master/examples/helloworld)
 
 ### Overview
 
