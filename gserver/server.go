@@ -96,7 +96,7 @@ func (gs *GrpcServer) Build() (*GrpcServer, error) {
 	if gs.config.HealthcheckInterval > 0 {
 		hcInterval = time.Duration(gs.config.HealthcheckInterval) * time.Second
 	}
-	gs.checker = healthcheck.NewChecker(hcInterval, gs.hck, gs.register, gs.unRegister, gs.logger)
+	gs.checker = healthcheck.NewChecker(hcInterval, gs.hck, gs.register, gs.deRegister, gs.logger)
 
 	return gs, nil
 }
@@ -142,7 +142,7 @@ func (gs *GrpcServer) register() error {
 	return nil
 }
 
-func (gs *GrpcServer) unRegister() error {
+func (gs *GrpcServer) deRegister() error {
 	for _, addr := range gs.localAddrs {
 		if err := gs.registry.Deregister(addr, gs.config.Port); err != nil {
 			return err
