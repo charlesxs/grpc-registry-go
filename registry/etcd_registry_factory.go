@@ -60,7 +60,7 @@ func (factory *etcdRegistryFactory) BuildOptions(cfg *config.ServerConfig) error
 
 // CreateRegistry 创建etcd registry
 func (factory *etcdRegistryFactory) CreateRegistry() (IRegistry, error) {
-	if err := factory.checkConfig(); err != nil {
+	if err := factory.checkOptions(); err != nil {
 		return nil, err
 	}
 
@@ -72,7 +72,7 @@ func (factory *etcdRegistryFactory) CreateRegistry() (IRegistry, error) {
 	return newEtcdRegistry(client, factory.Options)
 }
 
-func (factory *etcdRegistryFactory) checkConfig() error {
+func (factory *etcdRegistryFactory) checkOptions() error {
 	o := factory.Options
 	// 检查app name
 	if o.AppName == "" {

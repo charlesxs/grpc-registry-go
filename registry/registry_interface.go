@@ -9,8 +9,8 @@ type IRegistry interface {
 	// Register 以应用维度注册一个 endpoint
 	Register(addr string, port int, metadata interface{}) error
 
-	// Unregister 以应用维度取消一个endpoint的注册记录
-	Unregister(addr string, port int) error
+	// Deregister 以应用维度取消一个endpoint的注册记录
+	Deregister(addr string, port int) error
 }
 
 // IRegistryFactory registry工厂，用于创建不同的registry

@@ -69,7 +69,7 @@ func (r *etcdRegistry) Register(addr string, port int, metadata interface{}) err
 	return nil
 }
 
-func (r *etcdRegistry) Unregister(addr string, port int) error {
+func (r *etcdRegistry) Deregister(addr string, port int) error {
 	_, endpointPath := r.makeRegisterPath(addr, port)
 
 	// cancel

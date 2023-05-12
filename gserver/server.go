@@ -144,7 +144,7 @@ func (gs *GrpcServer) register() error {
 
 func (gs *GrpcServer) unRegister() error {
 	for _, addr := range gs.localAddrs {
-		if err := gs.registry.Unregister(addr, gs.config.Port); err != nil {
+		if err := gs.registry.Deregister(addr, gs.config.Port); err != nil {
 			return err
 		}
 	}
